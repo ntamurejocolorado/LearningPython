@@ -35,7 +35,7 @@ class Aplication(QWidget):
         if buttonReply == QMessageBox.Cancel:
             print("Cancel clicked")
 
-        # self.show() # Este show muestra el lienzo en blanco sobre el que pintamos.
+        self.show() # Este show muestra el lienzo en blanco sobre el que pintamos
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
