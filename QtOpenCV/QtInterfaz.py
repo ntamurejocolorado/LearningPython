@@ -74,6 +74,11 @@ class AplicationWebCam(QWidget):
         # Aqui se muestran los 3 botones para procesar el color de la imagen
         verticalLayoutButton = QVBoxLayout()
 
+        # Button Original
+        buttonOriginal = QPushButton("Original", self)
+        buttonOriginal.setMaximumWidth(100)
+        buttonOriginal.clicked.connect(self.slot_originalImage)
+
         # Button Gray
         buttonGray = QPushButton("Gray",self)
         buttonGray.setMaximumWidth(100)
@@ -82,10 +87,11 @@ class AplicationWebCam(QWidget):
         # Button Canny
         buttonCanny = QPushButton("Canny",self)
         buttonCanny.setMaximumWidth(100)
+        buttonCanny.clicked.connect(self.slot_cannyImage)
 
-        # Button Red
-        buttonRed = QPushButton("Red",self)
-        buttonRed.setMaximumWidth(100)
+        # Button Threshold
+        buttonThreshold = QPushButton("Threshold",self)
+        buttonThreshold.setMaximumWidth(100)
 
         #Button Save
         buttonSave = QPushButton("Save",self)
@@ -93,9 +99,10 @@ class AplicationWebCam(QWidget):
         buttonSave.clicked.connect(self.slot_saveImage)
 
 
+        verticalLayoutButton.addWidget(buttonOriginal)
         verticalLayoutButton.addWidget(buttonGray)
         verticalLayoutButton.addWidget(buttonCanny)
-        verticalLayoutButton.addWidget(buttonRed)
+        verticalLayoutButton.addWidget(buttonThreshold)
         verticalLayoutButton.addWidget(buttonSave)
 
 
@@ -113,6 +120,10 @@ class AplicationWebCam(QWidget):
             self.imageInMemory = cv2.imread(path, 1)  # 0 grayscale, 1 in color
         else:
             print("No existe")
+
+    def slot_originalImage(self):
+        print("Original:")
+        self.loadImage()
 
     def slot_grayImage(self):
         print("Gray image")
@@ -133,6 +144,19 @@ class AplicationWebCam(QWidget):
         pixmapRGBImage = QPixmap.fromImage(qRGBImage)
         self.labelImage.clear()
         self.labelImage.setPixmap(pixmapRGBImage)
+
+    def slot_cannyImage(self):
+        print("Canny Image")
+
+        edges = cv2.Canny(self.imageInMemory,100,200)
+
+        #Convert cvMat to QImage
+        qCannyImage = QImage(edges.data, edges.shape[1], edges.shape[0], edges.strides[0], QImage.Format_Indexed8)
+
+        # Convert QImage to Pixmap
+        pixmapCanny = QPixmap.fromImage(qCannyImage)
+        self.labelImage.clear()
+        self.labelImage.setPixmap(pixmapCanny)
 
 
     def slot_saveImage(self):
@@ -162,7 +186,6 @@ class AplicationWebCam(QWidget):
         self.imageScaled = self.photo.scaled(self.w,self.h, Qt.KeepAspectRatio)
         self.labelImage.setPixmap(self.imageScaled)
         self.labelImage.show()
-
 
 
 if __name__ == '__main__':
