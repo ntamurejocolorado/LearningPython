@@ -1,25 +1,45 @@
 import cv2
 import numpy as np
+from matplotlib import pyplot as plt
+
 # Info: http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html?highlight=matchtemplate
 # Nombre de la imagen que se va a cargar
-NombreImagen = 'corr_norm.tif'
-NombreModelo = 'modelo.tif'
+NombreImagen = "IMG.jpg"
+NombreModelo = "MM.jpg"
 
-# Cargamos la imagen y comprobamos que ok
+# Cargamos las imagenes
 src = cv2.imread(NombreImagen)
 templ = cv2.imread(NombreModelo)
+w, h, c = templ.shape
 
-if src is None:
-	print("Error al cargar la imagen: %s" %NombreImagen)
-if templ is None:
-	print("Error al cargar el modelo: %s" %NombreModelo)
-	
-# Reservamos memoria para los diversos metodos
-rows_src,cols_src,ch_src = src.shape
-rows_templ,cols_templ,ch_templ = templ.shape
+if src is None or templ is None:
+    print("Error al cargar las imagenes %s and %s" %(NombreImagen, NombreModelo))
+else:
+    iwidth = src.shape[1] - templ.shape[1] + 1
+    iheight = src.shape[0] - templ.shape[0] + 1
 
-iwidth = cols_src - cols_templ + 1
-iheight = rows_src - rows_templ + 1
+    match_method = cv2.TM_SQDIFF_NORMED
 
-for i in range(0,6):
-	res = cv2.matchTemplate(src,templ,)
+    #Correlacion
+    dst = cv2.matchTemplate(src,templ,match_method)
+    dst = cv2.normalize(dst,dst,0,1,cv2.NORM_MINMAX,-1)
+
+    min_Val,max_Val, min_Loc, max_Loc = cv2.minMaxLoc(dst)
+
+    # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
+    if match_method is cv2.TM_SQDIFF or match_method is cv2.TM_SQDIFF_NORMED:
+        top_left = min_Loc
+    else:
+        top_left = max_Loc
+
+    bottom_right = (top_left[0] + w, top_left[1] + h )
+
+    cv2.rectangle(src, top_left, bottom_right, 255, 2)
+
+    cv2.imshow("src", src)
+    cv2.imshow("Result", dst)
+    cv2.imshow("templ", templ)
+
+
+    cv2.waitKey(0)
+
