@@ -40,6 +40,8 @@ else:
     cv2.imshow("Result", dst)
     cv2.imshow("templ", templ)
 
+    # Modificar la luminosidad de la imagen para ver si la encuentra
+
 
     cv2.waitKey(0)
 
