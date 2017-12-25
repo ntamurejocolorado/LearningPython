@@ -8,7 +8,7 @@ NombreImagen = "ivvi_low_contrast.jpg"
 
 # Cargamos las imagenes
 src = cv2.imread(NombreImagen)
-src = cv2.cvtColor(src,cv2.COLOR_BGR2GRAY)
+src = cv2.cvtColor(src,cv2.COLOR_BGR2GRAY) # Convertimos la imagen a gris porque sino da error a la hora de calcular el histograma.
 
 if src is None:
     print("Error al cargar las imagenes %s and %s" %NombreImagen)
