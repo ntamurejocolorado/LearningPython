@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import * #QMainWindow, QApplication, QWidget, QPushButton, QAction
 from PyQt5.QtGui import  *
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 
@@ -14,13 +14,13 @@ class App(QMainWindow):
         self.left = 10
         self.top = 10
         self.width = 640
-        self.height = 400
+        self.height = 480
         return
 
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        videoWidget = QVideoWidget()
+        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
         # Create Open Action
         openButton = QAction('&Open',self)
@@ -41,15 +41,40 @@ class App(QMainWindow):
         fileMenu.addAction(openButton)
         fileMenu.addAction(exitButton)
 
+        #-----------------------------------
+        # Control panel
+        #----------------------------------
+
+        # Play button
+        self.playButton = QPushButton()
+        self.playButton.setEnabled(False)
+        self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.playButton.clicked.connect(self.play)
+
+        # Create layout to control panel
+        controlLayout = QHBoxLayout()
+        controlLayout.setContentsMargins(0,0,0,0)
+        controlLayout.addWidget(self.playButton)
+
+        # -------------------------------------
+
         # Create a widget for windows contents
         windowVideo = QWidget(self)
+        videoWidget = QVideoWidget()
+
+        self.mediaPlayer.setVideoOutput(videoWidget)
         self.setCentralWidget(windowVideo)
 
-        # Create layout
-        layout = QVBoxLayout()
-        layout.addWidget(videoWidget)
+        #-------------------------------------
+        # Create layout all interface
+        #-------------------------------------
+        layoutInterface = QVBoxLayout()
+        layoutInterface.addWidget(videoWidget)
+        layoutInterface.addLayout(controlLayout)
 
-        windowVideo.setLayout(layout)
+        windowVideo.setLayout(layoutInterface)
+
+
 
         return
 
@@ -57,16 +82,23 @@ class App(QMainWindow):
         print("Choose file to open")
         fileName, _ = QFileDialog.getOpenFileName(self, "Choose a video", QDir.homePath())
         print("Opening: %s" % fileName)
-        return
+        if fileName != '':
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(fileName)))
+            self.playButton.setEnabled(True)
 
+        return
 
     def close(self):
         print("Closing app...")
         sys.exit(0)
 
-
-
-
+    def play(self):
+        print("Play video...")
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.mediaPlayer.pause()
+        else:
+            self.mediaPlayer.play()
+        return
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
