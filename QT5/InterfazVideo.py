@@ -31,7 +31,7 @@ class ApplicationVideo(QMainWindow):
         exitButton = QAction('Exit', self)
         exitButton.setShortcut('Cmd+Q')
         exitButton.setStatusTip('Exit application')
-        exitButton.triggered.connect(self.close)
+        exitButton.triggered.connect(self.closeInterface)
 
         # Create Menu Bar
         mainMenu = self.menuBar()
@@ -101,7 +101,7 @@ class ApplicationVideo(QMainWindow):
             self.errorLabel.setText('')#If video is ok, update content in error label.
         return
 
-    def close(self):
+    def closeInterface(self):
         print("Closing app...")
         sys.exit(0)
 
