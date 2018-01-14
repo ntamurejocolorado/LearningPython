@@ -6,11 +6,10 @@ from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 
 
-
-class App(QMainWindow):
+class ApplicationVideo(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.title = 'PyQt5 menu - pythonspot.com'
+        self.title = 'Interfaz Video'
         self.left = 10
         self.top = 10
         self.width = 640
@@ -51,6 +50,7 @@ class App(QMainWindow):
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.play)
 
+
         # Create layout to control panel
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(0,0,0,0)
@@ -63,6 +63,7 @@ class App(QMainWindow):
         videoWidget = QVideoWidget()
 
         self.mediaPlayer.setVideoOutput(videoWidget)
+        self.mediaPlayer.stateChanged.connect(self.mediaStateChangedIcon)
         self.setCentralWidget(windowVideo)
 
         #-------------------------------------
@@ -73,9 +74,6 @@ class App(QMainWindow):
         layoutInterface.addLayout(controlLayout)
 
         windowVideo.setLayout(layoutInterface)
-
-
-
         return
 
     def openFile(self):
@@ -83,7 +81,8 @@ class App(QMainWindow):
         fileName, _ = QFileDialog.getOpenFileName(self, "Choose a video", QDir.homePath())
         print("Opening: %s" % fileName)
         if fileName != '':
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(fileName)))
+            url = QUrl.fromLocalFile(fileName)
+            self.mediaPlayer.setMedia(QMediaContent(url))
             self.playButton.setEnabled(True)
 
         return
@@ -93,17 +92,28 @@ class App(QMainWindow):
         sys.exit(0)
 
     def play(self):
-        print("Play video...")
+        # Change the state of video from play to pause. To change icon, call mediaStateChanged
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer.pause()
+            print("Pause video...")
         else:
             self.mediaPlayer.play()
+            print("Play video...")
         return
+
+    # Change icon play/pause.
+    def mediaStateChangedIcon(self):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+        else:
+            self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        return
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     print("Launching...")
-    gui = App()
+    gui = ApplicationVideo()
     gui.initUI()
     gui.show()
     sys.exit(app.exec_())
