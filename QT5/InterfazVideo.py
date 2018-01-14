@@ -50,11 +50,17 @@ class ApplicationVideo(QMainWindow):
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.play)
 
+        # State bar
+        self.positionSlider = QSlider(Qt.Horizontal)
+        self.positionSlider.setRange(0,0)
+        self.positionSlider.sliderMoved.connect(self.setPosition)
+
 
         # Create layout to control panel
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(0,0,0,0)
         controlLayout.addWidget(self.playButton)
+        controlLayout.addWidget(self.positionSlider)
 
         # -------------------------------------
 
@@ -64,6 +70,8 @@ class ApplicationVideo(QMainWindow):
 
         self.mediaPlayer.setVideoOutput(videoWidget)
         self.mediaPlayer.stateChanged.connect(self.mediaStateChangedIcon)
+        self.mediaPlayer.positionChanged.connect(self.positionChanged)
+        self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.setCentralWidget(windowVideo)
 
         #-------------------------------------
@@ -84,7 +92,6 @@ class ApplicationVideo(QMainWindow):
             url = QUrl.fromLocalFile(fileName)
             self.mediaPlayer.setMedia(QMediaContent(url))
             self.playButton.setEnabled(True)
-
         return
 
     def close(self):
@@ -109,6 +116,16 @@ class ApplicationVideo(QMainWindow):
             self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         return
 
+    # Position Slider
+    def setPosition(self,position):
+        self.mediaPlayer.setPosition(position)
+        return
+    def positionChanged(self,position):
+        self.positionSlider.setValue(position)
+        return
+    def durationChanged(self,duration):
+        self.positionSlider.setRange(0,duration)
+        return
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
