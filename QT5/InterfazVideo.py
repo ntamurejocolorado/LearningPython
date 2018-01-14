@@ -55,6 +55,10 @@ class ApplicationVideo(QMainWindow):
         self.positionSlider.setRange(0,0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
 
+        # Error Label
+        self.errorLabel = QLabel()
+        self.errorLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+
 
         # Create layout to control panel
         controlLayout = QHBoxLayout()
@@ -72,6 +76,7 @@ class ApplicationVideo(QMainWindow):
         self.mediaPlayer.stateChanged.connect(self.mediaStateChangedIcon)
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
+        self.mediaPlayer.error.connect(self.handleError)
         self.setCentralWidget(windowVideo)
 
         #-------------------------------------
@@ -80,6 +85,7 @@ class ApplicationVideo(QMainWindow):
         layoutInterface = QVBoxLayout()
         layoutInterface.addWidget(videoWidget)
         layoutInterface.addLayout(controlLayout)
+        layoutInterface.addWidget(self.errorLabel)
 
         windowVideo.setLayout(layoutInterface)
         return
@@ -92,6 +98,7 @@ class ApplicationVideo(QMainWindow):
             url = QUrl.fromLocalFile(fileName)
             self.mediaPlayer.setMedia(QMediaContent(url))
             self.playButton.setEnabled(True)
+            self.errorLabel.setText('')#If video is ok, update content in error label.
         return
 
     def close(self):
@@ -125,6 +132,12 @@ class ApplicationVideo(QMainWindow):
         return
     def durationChanged(self,duration):
         self.positionSlider.setRange(0,duration)
+        return
+
+    # Error
+    def handleError(self):
+        self.playButton.setEnabled(False)
+        self.errorLabel.setText("Error:" + self.mediaPlayer.errorString())
         return
 
 if __name__ == '__main__':
