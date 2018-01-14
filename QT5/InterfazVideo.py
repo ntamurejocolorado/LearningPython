@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import * #QMainWindow, QApplication, QWidget, QPushButton, QAction
 from PyQt5.QtGui import  *
-from PyQt5.QtCore import QDir, Qt, QUrl
+from PyQt5.QtCore import QDir, Qt, QUrl, QTime
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 
@@ -55,6 +55,15 @@ class ApplicationVideo(QMainWindow):
         self.positionSlider.setRange(0,0)
         self.positionSlider.sliderMoved.connect(self.setPosition)
 
+        # Timer
+        self.timer = QLabel('00:00:00')
+        self.timer.setFixedWidth(60)
+        self.timer.setFixedHeight(10)
+        self.timer.setUpdatesEnabled(True)
+
+
+
+
         # Error Label
         self.errorLabel = QLabel()
         self.errorLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
@@ -65,6 +74,7 @@ class ApplicationVideo(QMainWindow):
         controlLayout.setContentsMargins(0,0,0,0)
         controlLayout.addWidget(self.playButton)
         controlLayout.addWidget(self.positionSlider)
+        controlLayout.addWidget(self.timer)
 
         # -------------------------------------
 
@@ -129,6 +139,10 @@ class ApplicationVideo(QMainWindow):
         return
     def positionChanged(self,position):
         self.positionSlider.setValue(position)
+        # This update time label from position in ms
+        mtime = QTime(0,0,0,0)
+        mtime = mtime.addMSecs(self.mediaPlayer.position())
+        self.timer.setText(mtime.toString())
         return
     def durationChanged(self,duration):
         self.positionSlider.setRange(0,duration)
