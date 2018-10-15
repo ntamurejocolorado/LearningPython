@@ -89,6 +89,11 @@ class ApplicationVideo(QMainWindow):
         self.mediaPlayer.error.connect(self.handleError)
         self.setCentralWidget(windowVideo)
 
+        # -------------------------------------
+        # Group Box Select Temps
+        # -------------------------------------
+        
+
         #-------------------------------------
         # Create layout all interface
         #-------------------------------------
