@@ -1,8 +1,33 @@
 .idea/
 .DS_Store
+*.pyc
 .sample_wheel/.tox/
 
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
+
+# C extensions
+*.c
+*.so
+.sample_wheel/*.c
+.sample_wheel/*.so
+
 
 eggs/
 .eggs/
